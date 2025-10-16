@@ -1,16 +1,44 @@
 import { Card } from "@/components/ui/card";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-const data = [
-  { month: "Jan", seniorA: 85, u23: 78, u20: 72 },
-  { month: "Fév", seniorA: 88, u23: 80, u20: 75 },
-  { month: "Mar", seniorA: 82, u23: 83, u20: 78 },
-  { month: "Avr", seniorA: 90, u23: 85, u20: 80 },
-  { month: "Mai", seniorA: 92, u23: 87, u20: 82 },
-  { month: "Jun", seniorA: 89, u23: 88, u20: 85 },
-];
+const allData = {
+  can: [
+    { month: "Jan", seniorA: 82, u23: 75, u20: 68 },
+    { month: "Fév", seniorA: 85, u23: 78, u20: 72 },
+    { month: "Mar", seniorA: 88, u23: 80, u20: 75 },
+    { month: "Avr", seniorA: 90, u23: 82, u20: 78 },
+  ],
+  mondial: [
+    { month: "Jan", seniorA: 75, u23: 68, u20: 62 },
+    { month: "Fév", seniorA: 78, u23: 70, u20: 65 },
+    { month: "Mar", seniorA: 82, u23: 72, u20: 68 },
+    { month: "Avr", seniorA: 85, u23: 75, u20: 70 },
+    { month: "Mai", seniorA: 88, u23: 78, u20: 73 },
+    { month: "Jun", seniorA: 84, u23: 76, u20: 71 },
+  ],
+  amical: [
+    { month: "Jan", seniorA: 70, u23: 65, u20: 60 },
+    { month: "Fév", seniorA: 73, u23: 67, u20: 62 },
+    { month: "Mar", seniorA: 76, u23: 70, u20: 65 },
+    { month: "Avr", seniorA: 78, u23: 72, u20: 67 },
+  ],
+  all: [
+    { month: "Jan", seniorA: 85, u23: 78, u20: 72 },
+    { month: "Fév", seniorA: 88, u23: 80, u20: 75 },
+    { month: "Mar", seniorA: 82, u23: 83, u20: 78 },
+    { month: "Avr", seniorA: 90, u23: 85, u20: 80 },
+    { month: "Mai", seniorA: 92, u23: 87, u20: 82 },
+    { month: "Jun", seniorA: 89, u23: 88, u20: 85 },
+  ],
+};
 
-export const PerformanceChart = () => {
+interface PerformanceChartProps {
+  competition: string;
+  period: string;
+}
+
+export const PerformanceChart = ({ competition }: PerformanceChartProps) => {
+  const data = allData[competition as keyof typeof allData] || allData.all;
   return (
     <Card className="p-6 bg-card/50 backdrop-blur-sm border-border">
       <h3 className="text-xl font-bold mb-6">Évolution des Performances</h3>

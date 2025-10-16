@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Users, Trophy } from "lucide-react";
 import { PerformanceChart } from "@/components/PerformanceChart";
 import { TeamComparison } from "@/components/TeamComparison";
 import { AIInsights } from "@/components/AIInsights";
+import { FilterPanel } from "@/components/FilterPanel";
 
 const Dashboard = () => {
+  const [selectedPlayer, setSelectedPlayer] = useState("all");
+  const [selectedCompetition, setSelectedCompetition] = useState("all");
+  const [selectedPeriod, setSelectedPeriod] = useState("6months");
   const stats = [
     {
       title: "Matchs Analysés",
@@ -48,6 +53,16 @@ const Dashboard = () => {
           </p>
         </div>
 
+        {/* Filters */}
+        <FilterPanel
+          selectedPlayer={selectedPlayer}
+          selectedCompetition={selectedCompetition}
+          selectedPeriod={selectedPeriod}
+          onPlayerChange={setSelectedPlayer}
+          onCompetitionChange={setSelectedCompetition}
+          onPeriodChange={setSelectedPeriod}
+        />
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
@@ -69,8 +84,14 @@ const Dashboard = () => {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <PerformanceChart />
-          <TeamComparison />
+          <PerformanceChart 
+            competition={selectedCompetition}
+            period={selectedPeriod}
+          />
+          <TeamComparison 
+            competition={selectedCompetition}
+            period={selectedPeriod}
+          />
         </div>
 
         {/* AI Insights */}
