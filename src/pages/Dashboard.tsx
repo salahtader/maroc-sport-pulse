@@ -5,6 +5,8 @@ import { PerformanceChart } from "@/components/PerformanceChart";
 import { TeamComparison } from "@/components/TeamComparison";
 import { AIInsights } from "@/components/AIInsights";
 import { FilterPanel } from "@/components/FilterPanel";
+import { TeamStats } from "@/components/TeamStats";
+import { CompetitionPerformance } from "@/components/CompetitionPerformance";
 
 const Dashboard = () => {
   const [selectedPlayer, setSelectedPlayer] = useState("all");
@@ -92,6 +94,14 @@ const Dashboard = () => {
             competition={selectedCompetition}
             period={selectedPeriod}
           />
+        </div>
+
+        {/* Team Statistics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <TeamStats selectedPlayer={selectedPlayer} />
+          </div>
+          <CompetitionPerformance selectedPlayer={selectedPlayer} />
         </div>
 
         {/* AI Insights */}
