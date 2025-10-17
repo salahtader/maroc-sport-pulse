@@ -3,19 +3,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Filter } from "lucide-react";
 
 interface FilterPanelProps {
-  selectedPlayer: string;
+  selectedTeam: string;
   selectedCompetition: string;
   selectedPeriod: string;
-  onPlayerChange: (value: string) => void;
+  onTeamChange: (value: string) => void;
   onCompetitionChange: (value: string) => void;
   onPeriodChange: (value: string) => void;
 }
 
 export const FilterPanel = ({
-  selectedPlayer,
+  selectedTeam,
   selectedCompetition,
   selectedPeriod,
-  onPlayerChange,
+  onTeamChange,
   onCompetitionChange,
   onPeriodChange,
 }: FilterPanelProps) => {
@@ -28,18 +28,15 @@ export const FilterPanel = ({
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <label className="text-sm text-muted-foreground">Joueur</label>
-          <Select value={selectedPlayer} onValueChange={onPlayerChange}>
+          <label className="text-sm text-muted-foreground">Équipe</label>
+          <Select value={selectedTeam} onValueChange={onTeamChange}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les joueurs</SelectItem>
-              <SelectItem value="ziyech">Hakim Ziyech</SelectItem>
-              <SelectItem value="hakimi">Achraf Hakimi</SelectItem>
-              <SelectItem value="mazraoui">Noussair Mazraoui</SelectItem>
-              <SelectItem value="bounou">Yassine Bounou</SelectItem>
-              <SelectItem value="amrabat">Sofyan Amrabat</SelectItem>
+              <SelectItem value="seniorA">Équipe A (Seniors)</SelectItem>
+              <SelectItem value="u23">Équipe U23</SelectItem>
+              <SelectItem value="u20">Équipe U20</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -66,10 +63,11 @@ export const FilterPanel = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="3months">3 derniers mois</SelectItem>
               <SelectItem value="6months">6 derniers mois</SelectItem>
               <SelectItem value="1year">Dernière année</SelectItem>
-              <SelectItem value="2024">2024</SelectItem>
-              <SelectItem value="2023">2023</SelectItem>
+              <SelectItem value="2024">Année 2024</SelectItem>
+              <SelectItem value="2023">Année 2023</SelectItem>
             </SelectContent>
           </Select>
         </div>

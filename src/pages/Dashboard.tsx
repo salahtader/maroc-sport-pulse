@@ -7,9 +7,12 @@ import { AIInsights } from "@/components/AIInsights";
 import { FilterPanel } from "@/components/FilterPanel";
 import { TeamStats } from "@/components/TeamStats";
 import { CompetitionPerformance } from "@/components/CompetitionPerformance";
+import { RadarComparison } from "@/components/RadarComparison";
+import { ExportButton } from "@/components/ExportButton";
+import { dataProvider, TeamType } from "@/lib/dataProvider";
 
 const Dashboard = () => {
-  const [selectedPlayer, setSelectedPlayer] = useState("all");
+  const [selectedTeam, setSelectedTeam] = useState("seniorA");
   const [selectedCompetition, setSelectedCompetition] = useState("all");
   const [selectedPeriod, setSelectedPeriod] = useState("6months");
   const stats = [
@@ -46,24 +49,35 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
-            Dashboard Sport Marocain
-          </h1>
-          <p className="text-muted-foreground">
-            Analyse en temps réel des performances des équipes nationales
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+              Dashboard Sport Marocain
+            </h1>
+            <p className="text-muted-foreground">
+              Analyse en temps réel des performances des équipes nationales • {dataProvider.getTeamLabel(selectedTeam as TeamType)}
+            </p>
+          </div>
+          <ExportButton 
+            competition={selectedCompetition} 
+            period={selectedPeriod}
+            team={selectedTeam}
+          />
         </div>
 
         {/* Filters */}
-        <FilterPanel
-          selectedPlayer={selectedPlayer}
-          selectedCompetition={selectedCompetition}
-          selectedPeriod={selectedPeriod}
-          onPlayerChange={setSelectedPlayer}
-          onCompetitionChange={setSelectedCompetition}
-          onPeriodChange={setSelectedPeriod}
-        />
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <div className="flex-1">
+            <FilterPanel
+              selectedTeam={selectedTeam}
+              selectedCompetition={selectedCompetition}
+              selectedPeriod={selectedPeriod}
+              onTeamChange={setSelectedTeam}
+              onCompetitionChange={setSelectedCompetition}
+              onPeriodChange={setSelectedPeriod}
+            />
+          </div>
+        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -99,9 +113,14 @@ const Dashboard = () => {
         {/* Team Statistics */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <TeamStats selectedPlayer={selectedPlayer} />
+            <TeamStats selectedPlayer={selectedTeam} />
           </div>
-          <CompetitionPerformance selectedPlayer={selectedPlayer} />
+          <CompetitionPerformance selectedPlayer={selectedTeam} />
+        </div>
+
+        {/* Radar Comparison */}
+        <div className="mb-8">
+          <RadarComparison selectedTeam={selectedTeam as TeamType} />
         </div>
 
         {/* AI Insights */}

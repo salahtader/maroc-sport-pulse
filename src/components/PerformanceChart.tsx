@@ -1,47 +1,58 @@
 import { Card } from "@/components/ui/card";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
-const allData = {
-  can: [
-    { month: "Jan", seniorA: 82, u23: 75, u20: 68 },
-    { month: "Fév", seniorA: 85, u23: 78, u20: 72 },
-    { month: "Mar", seniorA: 88, u23: 80, u20: 75 },
-    { month: "Avr", seniorA: 90, u23: 82, u20: 78 },
-  ],
-  mondial: [
-    { month: "Jan", seniorA: 75, u23: 68, u20: 62 },
-    { month: "Fév", seniorA: 78, u23: 70, u20: 65 },
-    { month: "Mar", seniorA: 82, u23: 72, u20: 68 },
-    { month: "Avr", seniorA: 85, u23: 75, u20: 70 },
-    { month: "Mai", seniorA: 88, u23: 78, u20: 73 },
-    { month: "Jun", seniorA: 84, u23: 76, u20: 71 },
-  ],
-  amical: [
-    { month: "Jan", seniorA: 70, u23: 65, u20: 60 },
-    { month: "Fév", seniorA: 73, u23: 67, u20: 62 },
-    { month: "Mar", seniorA: 76, u23: 70, u20: 65 },
-    { month: "Avr", seniorA: 78, u23: 72, u20: 67 },
-  ],
-  all: [
-    { month: "Jan", seniorA: 85, u23: 78, u20: 72 },
-    { month: "Fév", seniorA: 88, u23: 80, u20: 75 },
-    { month: "Mar", seniorA: 82, u23: 83, u20: 78 },
-    { month: "Avr", seniorA: 90, u23: 85, u20: 80 },
-    { month: "Mai", seniorA: 92, u23: 87, u20: 82 },
-    { month: "Jun", seniorA: 89, u23: 88, u20: 85 },
-  ],
-};
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
+import { dataProvider, CompetitionType, PeriodType } from "@/lib/dataProvider";
+import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PerformanceChartProps {
   competition: string;
   period: string;
 }
 
-export const PerformanceChart = ({ competition }: PerformanceChartProps) => {
-  const data = allData[competition as keyof typeof allData] || allData.all;
+export const PerformanceChart = ({ competition, period }: PerformanceChartProps) => {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [visibleLines, setVisibleLines] = useState({
+    seniorA: true,
+    u23: true,
+    u20: true,
+  });
+
+  useEffect(() => {
+    setLoading(true);
+    // Simulate API call delay
+    setTimeout(() => {
+      const newData = dataProvider.getPerformanceData(
+        competition as CompetitionType,
+        period as PeriodType
+      );
+      setData(newData);
+      setLoading(false);
+    }, 300);
+  }, [competition, period]);
+
+  const toggleLine = (dataKey: keyof typeof visibleLines) => {
+    setVisibleLines(prev => ({ ...prev, [dataKey]: !prev[dataKey] }));
+  };
+
+  if (loading) {
+    return (
+      <Card className="p-6 bg-card/50 backdrop-blur-sm border-border">
+        <Skeleton className="h-6 w-48 mb-6" />
+        <Skeleton className="h-[300px] w-full" />
+      </Card>
+    );
+  }
   return (
     <Card className="p-6 bg-card/50 backdrop-blur-sm border-border">
-      <h3 className="text-xl font-bold mb-6">Évolution des Performances</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-xl font-bold">Évolution des Performances</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {dataProvider.getCompetitionLabel(competition as CompetitionType)} • {dataProvider.getPeriodLabel(period as PeriodType)}
+          </p>
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <XAxis
@@ -57,45 +68,69 @@ export const PerformanceChart = ({ competition }: PerformanceChartProps) => {
               borderRadius: "8px",
             }}
           />
-          <Line
-            type="monotone"
-            dataKey="seniorA"
-            stroke="hsl(var(--primary))"
-            strokeWidth={3}
-            dot={{ fill: "hsl(var(--primary))", r: 4 }}
-            name="Équipe A"
-          />
-          <Line
-            type="monotone"
-            dataKey="u23"
-            stroke="hsl(var(--secondary))"
-            strokeWidth={3}
-            dot={{ fill: "hsl(var(--secondary))", r: 4 }}
-            name="U23"
-          />
-          <Line
-            type="monotone"
-            dataKey="u20"
-            stroke="hsl(var(--accent))"
-            strokeWidth={3}
-            dot={{ fill: "hsl(var(--accent))", r: 4 }}
-            name="U20"
-          />
+          {visibleLines.seniorA && (
+            <Line
+              type="monotone"
+              dataKey="seniorA"
+              stroke="hsl(var(--primary))"
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--primary))", r: 4 }}
+              name="Équipe A"
+              animationDuration={500}
+            />
+          )}
+          {visibleLines.u23 && (
+            <Line
+              type="monotone"
+              dataKey="u23"
+              stroke="hsl(var(--secondary))"
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--secondary))", r: 4 }}
+              name="U23"
+              animationDuration={500}
+            />
+          )}
+          {visibleLines.u20 && (
+            <Line
+              type="monotone"
+              dataKey="u20"
+              stroke="hsl(var(--accent))"
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--accent))", r: 4 }}
+              name="U20"
+              animationDuration={500}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
       <div className="flex justify-center gap-6 mt-4">
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => toggleLine('seniorA')}
+          className={`flex items-center gap-2 cursor-pointer transition-opacity ${
+            !visibleLines.seniorA ? 'opacity-40' : 'opacity-100'
+          }`}
+        >
           <div className="w-3 h-3 rounded-full bg-primary" />
           <span className="text-sm">Équipe A</span>
-        </div>
-        <div className="flex items-center gap-2">
+        </button>
+        <button
+          onClick={() => toggleLine('u23')}
+          className={`flex items-center gap-2 cursor-pointer transition-opacity ${
+            !visibleLines.u23 ? 'opacity-40' : 'opacity-100'
+          }`}
+        >
           <div className="w-3 h-3 rounded-full bg-secondary" />
           <span className="text-sm">U23</span>
-        </div>
-        <div className="flex items-center gap-2">
+        </button>
+        <button
+          onClick={() => toggleLine('u20')}
+          className={`flex items-center gap-2 cursor-pointer transition-opacity ${
+            !visibleLines.u20 ? 'opacity-40' : 'opacity-100'
+          }`}
+        >
           <div className="w-3 h-3 rounded-full bg-accent" />
           <span className="text-sm">U20</span>
-        </div>
+        </button>
       </div>
     </Card>
   );
