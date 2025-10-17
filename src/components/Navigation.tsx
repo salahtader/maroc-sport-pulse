@@ -33,6 +33,14 @@ export const Navigation = () => {
                 Dashboard
               </Button>
             </Link>
+            <Link to="/players">
+              <Button
+                variant={location.pathname === "/players" ? "default" : "ghost"}
+                className="hover:bg-primary/10"
+              >
+                Joueurs
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
