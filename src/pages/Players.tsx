@@ -8,6 +8,7 @@ import { dataProvider, Player, TeamType } from "@/lib/dataProvider";
 import { PlayerCard } from "@/components/PlayerCard";
 import { PlayerDetailsDialog } from "@/components/PlayerDetailsDialog";
 import { PlayersComparison } from "@/components/PlayersComparison";
+import { PlayerRadarAnalysis } from "@/components/PlayerRadarAnalysis";
 import { SortControls, SortOption, SortDirection } from "@/components/SortControls";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useToast } from "@/hooks/use-toast";
@@ -249,13 +250,16 @@ const Players = () => {
 
         {/* Comparison View */}
         {compareMode && selectedForComparison.length >= 2 && (
-          <PlayersComparison
-            playerIds={selectedForComparison}
-            onClose={() => {
-              setCompareMode(false);
-              setSelectedForComparison([]);
-            }}
-          />
+          <>
+            <PlayerRadarAnalysis playerIds={selectedForComparison} />
+            <PlayersComparison
+              playerIds={selectedForComparison}
+              onClose={() => {
+                setCompareMode(false);
+                setSelectedForComparison([]);
+              }}
+            />
+          </>
         )}
 
         {/* Players Grid */}
