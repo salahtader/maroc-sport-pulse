@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { PlayerIndividualRadar } from "@/components/PlayerIndividualRadar";
 import { 
   User, MapPin, Trophy, TrendingUp, Target, Shield, 
   Activity, Zap, AlertCircle, Clock, Calendar
@@ -84,8 +85,9 @@ export const PlayerDetailsDialog = ({ player, onClose }: PlayerDetailsDialogProp
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+            <TabsTrigger value="radar">Radar</TabsTrigger>
             <TabsTrigger value="offensive">Offensif</TabsTrigger>
             <TabsTrigger value="defensive">Défensif</TabsTrigger>
             <TabsTrigger value="passing">Passes</TabsTrigger>
@@ -151,6 +153,10 @@ export const PlayerDetailsDialog = ({ player, onClose }: PlayerDetailsDialogProp
                 <StatItem label="Fautes subies" value={stats.foulsSuffered} icon={AlertCircle} />
               </div>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="radar" className="space-y-4">
+            <PlayerIndividualRadar playerId={player.id} />
           </TabsContent>
 
           <TabsContent value="offensive" className="space-y-4">
