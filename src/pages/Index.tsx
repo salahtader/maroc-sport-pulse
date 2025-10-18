@@ -37,7 +37,7 @@ const Index = () => {
             <span className="text-sm font-medium">Plateforme Data & IA</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in">
             Analytics du Sport
             <br />
             <span className="bg-gradient-primary bg-clip-text text-transparent">
@@ -45,12 +45,12 @@ const Index = () => {
             </span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
             La première plateforme d'analyse data et IA dédiée aux performances des équipes nationales marocaines. 
             Des insights professionnels pour journalistes, coachs et médias sportifs.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <Link to="/dashboard">
               <Button size="lg" className="group shadow-glow-red hover:shadow-glow-red/50 transition-all duration-300">
                 Accéder au Dashboard
@@ -70,7 +70,8 @@ const Index = () => {
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="p-6 bg-card/50 backdrop-blur-sm border-border hover:shadow-card transition-all duration-300 hover:scale-105 group"
+              className="p-6 bg-gradient-card backdrop-blur-sm border-border hover:shadow-elevated transition-all duration-300 hover:scale-105 group animate-scale-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="p-3 rounded-lg bg-gradient-primary w-fit mb-4 group-hover:shadow-glow-red transition-shadow duration-300">
                 <feature.icon className="h-6 w-6 text-white" />
@@ -84,7 +85,7 @@ const Index = () => {
 
       {/* Stats Section */}
       <div className="container mx-auto px-4 pb-20">
-        <Card className="p-8 md:p-12 bg-card/50 backdrop-blur-sm border-border">
+        <Card className="p-8 md:p-12 bg-gradient-card backdrop-blur-sm border-border hover:shadow-elevated transition-all duration-300 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold text-primary mb-2">234</div>

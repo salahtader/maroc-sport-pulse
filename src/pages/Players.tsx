@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, Search, Filter, TrendingUp, Target, Shield, Activity } from "lucide-react";
+import { Users, Search, Star, TrendingUp, Target, Shield, Activity } from "lucide-react";
 import { dataProvider, Player, TeamType } from "@/lib/dataProvider";
 import { PlayerCard } from "@/components/PlayerCard";
 import { PlayerDetailsDialog } from "@/components/PlayerDetailsDialog";
 import { PlayersComparison } from "@/components/PlayersComparison";
+import { SortControls, SortOption, SortDirection } from "@/components/SortControls";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -18,18 +20,52 @@ import {
 } from "@/components/ui/select";
 
 const Players = () => {
+  const { toast } = useToast();
   const [selectedTeam, setSelectedTeam] = useState<TeamType>("seniorA");
   const [selectedPosition, setSelectedPosition] = useState<Player['position'] | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const allPlayers = dataProvider.getPlayers(selectedTeam, selectedPosition === 'all' ? undefined : selectedPosition);
-  const filteredPlayers = allPlayers.filter(player =>
-    player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    player.club.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  
+  const filteredAndSortedPlayers = useMemo(() => {
+    let filtered = allPlayers.filter(player =>
+      player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      player.club.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Sort players
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      if (sortBy === 'name') {
+        aValue = a.name;
+        bValue = b.name;
+      } else if (sortBy === 'age') {
+        aValue = a.age;
+        bValue = b.age;
+      } else {
+        const aStats = dataProvider.getPlayerStats(a.id);
+        const bStats = dataProvider.getPlayerStats(b.id);
+        aValue = aStats?.[sortBy] || 0;
+        bValue = bStats?.[sortBy] || 0;
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  }, [allPlayers, searchQuery, sortBy, sortDirection]);
 
   const stats = [
     {
@@ -71,15 +107,43 @@ const Players = () => {
   };
 
   const toggleCompareMode = () => {
-    setCompareMode(!compareMode);
+    const newMode = !compareMode;
+    setCompareMode(newMode);
     setSelectedForComparison([]);
+    
+    toast({
+      title: newMode ? "Mode comparaison activé" : "Mode comparaison désactivé",
+      description: newMode ? "Sélectionnez 2-3 joueurs à comparer" : "Retour au mode normal",
+    });
+  };
+
+  const toggleFavorite = (playerId: string) => {
+    setFavorites(prev => {
+      const newFavorites = prev.includes(playerId)
+        ? prev.filter(id => id !== playerId)
+        : [...prev, playerId];
+      
+      toast({
+        title: newFavorites.includes(playerId) ? "Ajouté aux favoris" : "Retiré des favoris",
+        description: "Vos préférences ont été sauvegardées",
+      });
+      
+      return newFavorites;
+    });
+  };
+
+  const handleSortChange = (newSortBy: SortOption, newDirection: SortDirection) => {
+    setSortBy(newSortBy);
+    setSortDirection(newDirection);
   };
 
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs />
+        
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fade-in">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
@@ -116,41 +180,70 @@ const Players = () => {
         </div>
 
         {/* Filters */}
-        <Card className="p-6 mb-6 bg-card/50 backdrop-blur-sm border-border">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher un joueur ou club..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+        <Card className="p-6 mb-6 bg-card/50 backdrop-blur-sm border-border animate-slide-in">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un joueur ou club..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
               </div>
+              <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value as TeamType)}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="seniorA">Équipe A</SelectItem>
+                  <SelectItem value="u23">Équipe U23</SelectItem>
+                  <SelectItem value="u20">Équipe U20</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={selectedPosition} onValueChange={(value) => setSelectedPosition(value as Player['position'] | 'all')}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les postes</SelectItem>
+                  <SelectItem value="GK">Gardiens</SelectItem>
+                  <SelectItem value="DEF">Défenseurs</SelectItem>
+                  <SelectItem value="MID">Milieux</SelectItem>
+                  <SelectItem value="ATT">Attaquants</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value as TeamType)}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="seniorA">Équipe A</SelectItem>
-                <SelectItem value="u23">Équipe U23</SelectItem>
-                <SelectItem value="u20">Équipe U20</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={selectedPosition} onValueChange={(value) => setSelectedPosition(value as Player['position'] | 'all')}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les postes</SelectItem>
-                <SelectItem value="GK">Gardiens</SelectItem>
-                <SelectItem value="DEF">Défenseurs</SelectItem>
-                <SelectItem value="MID">Milieux</SelectItem>
-                <SelectItem value="ATT">Attaquants</SelectItem>
-              </SelectContent>
-            </Select>
+            
+            <div className="flex items-center justify-between pt-2 border-t border-border">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const showingFavorites = searchQuery === '[FAVORIS]';
+                    if (showingFavorites) {
+                      setSearchQuery('');
+                    } else {
+                      setSearchQuery('[FAVORIS]');
+                    }
+                  }}
+                  className="gap-2"
+                >
+                  <Star className="h-4 w-4" />
+                  Favoris ({favorites.length})
+                </Button>
+              </div>
+              
+              <SortControls
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                onSortChange={handleSortChange}
+              />
+            </div>
           </div>
         </Card>
 
@@ -169,26 +262,33 @@ const Players = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">
-              {filteredPlayers.length} {filteredPlayers.length === 1 ? 'Joueur' : 'Joueurs'}
+              {filteredAndSortedPlayers.length} {filteredAndSortedPlayers.length === 1 ? 'Joueur' : 'Joueurs'}
             </h2>
             {compareMode && (
-              <Badge variant="secondary" className="text-sm">
+              <Badge variant="secondary" className="text-sm animate-pulse">
                 Sélectionnez 2-3 joueurs à comparer
               </Badge>
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredPlayers.map((player) => (
-              <PlayerCard
+            {filteredAndSortedPlayers
+              .filter(player => searchQuery !== '[FAVORIS]' || favorites.includes(player.id))
+              .map((player, index) => (
+              <div 
                 key={player.id}
-                player={player}
-                onClick={() => handlePlayerSelect(player)}
-                isSelected={selectedForComparison.includes(player.id)}
-                compareMode={compareMode}
-              />
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <PlayerCard
+                  player={player}
+                  onClick={() => handlePlayerSelect(player)}
+                  isSelected={selectedForComparison.includes(player.id)}
+                  compareMode={compareMode}
+                />
+              </div>
             ))}
           </div>
-          {filteredPlayers.length === 0 && (
+          {filteredAndSortedPlayers.length === 0 && (
             <Card className="p-12 bg-card/50 backdrop-blur-sm border-border text-center">
               <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground">Aucun joueur trouvé</p>

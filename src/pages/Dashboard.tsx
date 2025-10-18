@@ -9,6 +9,7 @@ import { TeamStats } from "@/components/TeamStats";
 import { CompetitionPerformance } from "@/components/CompetitionPerformance";
 import { RadarComparison } from "@/components/RadarComparison";
 import { ExportButton } from "@/components/ExportButton";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { dataProvider, TeamType } from "@/lib/dataProvider";
 
 const Dashboard = () => {
@@ -49,7 +50,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 flex items-start justify-between">
+        <Breadcrumbs />
+        
+        <div className="mb-8 flex items-start justify-between animate-fade-in">
           <div>
             <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
               Dashboard Sport Marocain
@@ -84,7 +87,8 @@ const Dashboard = () => {
           {stats.map((stat, index) => (
             <Card
               key={index}
-              className="p-6 bg-card/50 backdrop-blur-sm border-border hover:shadow-card transition-all duration-300 hover:scale-105"
+              className="p-6 bg-gradient-card backdrop-blur-sm border-border hover:shadow-elevated transition-all duration-300 hover:scale-105 cursor-pointer animate-scale-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-center justify-between mb-4">
                 <stat.icon className={`h-8 w-8 ${stat.color}`} />
