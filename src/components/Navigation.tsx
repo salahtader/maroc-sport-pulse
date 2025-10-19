@@ -9,6 +9,7 @@ export const Navigation = () => {
     { path: "/", label: "Accueil" },
     { path: "/dashboard", label: "Dashboard" },
     { path: "/players", label: "Joueurs" },
+    { path: "/matches", label: "Matchs" },
   ];
 
   return (

@@ -1,9 +1,46 @@
 // Centralized data provider for the application
 // This simulates a real API but provides a clean interface for data access
 
-export type TeamType = 'seniorA' | 'u23' | 'u20';
-export type CompetitionType = 'all' | 'can' | 'mondial' | 'amical';
+export type TeamType = 'seniorA' | 'u23' | 'u20' | 'all';
+export type CompetitionType = 'all' | 'league' | 'cup' | 'europe';
 export type PeriodType = '3months' | '6months' | '1year' | '2024' | '2023';
+
+export type Match = {
+  id: string;
+  date: string;
+  competition: CompetitionType;
+  opponent: string;
+  result: 'W' | 'D' | 'L';
+  score: string;
+  location: 'home' | 'away';
+};
+
+export type MatchStats = {
+  matchId: string;
+  playerId: string;
+  minutesPlayed: number;
+  goals: number;
+  assists: number;
+  rating: number;
+  keyPasses: number;
+  shots: number;
+  shotsOnTarget: number;
+  passAccuracy: number;
+  tackles: number;
+  interceptions: number;
+  fouls: number;
+  yellowCard: boolean;
+  redCard: boolean;
+};
+
+export type PlayerEvolution = {
+  date: string;
+  rating: number;
+  goals: number;
+  assists: number;
+  minutesPlayed: number;
+  matchesPlayed: number;
+};
 
 interface PerformanceData {
   month: string;
@@ -208,6 +245,103 @@ const playersData: Player[] = [
   { id: '27', name: 'Abdelhamid Aït Boudlal', number: 9, position: 'ATT', team: 'u20', age: 19, club: 'FUS Rabat', nationality: 'MAR' },
 ];
 
+// Generate match history
+const generateMatches = (): Match[] => {
+  const matches: Match[] = [];
+  const opponents = ['FC Barcelona', 'Real Madrid', 'Atlético Madrid', 'Sevilla FC', 'Valencia CF', 'Athletic Bilbao', 'Real Sociedad', 'Villarreal CF'];
+  const competitions: CompetitionType[] = ['league', 'cup', 'europe'];
+  
+  for (let i = 0; i < 30; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - (i * 4));
+    
+    matches.push({
+      id: `match-${i + 1}`,
+      date: date.toISOString().split('T')[0],
+      competition: competitions[Math.floor(Math.random() * competitions.length)],
+      opponent: opponents[Math.floor(Math.random() * opponents.length)],
+      result: ['W', 'D', 'L'][Math.floor(Math.random() * 3)] as 'W' | 'D' | 'L',
+      score: `${Math.floor(Math.random() * 4)}-${Math.floor(Math.random() * 4)}`,
+      location: Math.random() > 0.5 ? 'home' : 'away'
+    });
+  }
+  
+  return matches.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+// Generate match stats for players
+const generateMatchStats = (): Record<string, MatchStats[]> => {
+  const matches = generateMatches();
+  const stats: Record<string, MatchStats[]> = {};
+  
+  playersData.forEach(player => {
+    stats[player.id] = matches.slice(0, 20).map(match => ({
+      matchId: match.id,
+      playerId: player.id,
+      minutesPlayed: Math.floor(Math.random() * 90) + 1,
+      goals: player.position === 'ATT' ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 2),
+      assists: Math.floor(Math.random() * 3),
+      rating: 5 + Math.random() * 5,
+      keyPasses: Math.floor(Math.random() * 5),
+      shots: Math.floor(Math.random() * 6),
+      shotsOnTarget: Math.floor(Math.random() * 4),
+      passAccuracy: 70 + Math.random() * 25,
+      tackles: Math.floor(Math.random() * 8),
+      interceptions: Math.floor(Math.random() * 6),
+      fouls: Math.floor(Math.random() * 3),
+      yellowCard: Math.random() > 0.8,
+      redCard: Math.random() > 0.95
+    }));
+  });
+  
+  return stats;
+};
+
+// Generate player evolution data
+const generatePlayerEvolution = (): Record<string, PlayerEvolution[]> => {
+  const evolution: Record<string, PlayerEvolution[]> = {};
+  
+  playersData.forEach(player => {
+    const data: PlayerEvolution[] = [];
+    let cumulativeGoals = 0;
+    let cumulativeAssists = 0;
+    let cumulativeMinutes = 0;
+    let cumulativeMatches = 0;
+    
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      
+      const monthlyGoals = player.position === 'ATT' ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 3);
+      const monthlyAssists = Math.floor(Math.random() * 4);
+      const monthlyMinutes = Math.floor(Math.random() * 400) + 200;
+      const monthlyMatches = Math.floor(Math.random() * 5) + 1;
+      
+      cumulativeGoals += monthlyGoals;
+      cumulativeAssists += monthlyAssists;
+      cumulativeMinutes += monthlyMinutes;
+      cumulativeMatches += monthlyMatches;
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        rating: 5 + Math.random() * 4,
+        goals: cumulativeGoals,
+        assists: cumulativeAssists,
+        minutesPlayed: cumulativeMinutes,
+        matchesPlayed: cumulativeMatches
+      });
+    }
+    
+    evolution[player.id] = data;
+  });
+  
+  return evolution;
+};
+
+const matchesData = generateMatches();
+const matchStatsData = generateMatchStats();
+const playerEvolutionData = generatePlayerEvolution();
+
 const playerStatsData: Record<string, PlayerStats> = {
   '1': { playerId: '1', matchesPlayed: 12, minutesPlayed: 1080, starts: 12, goals: 0, assists: 0, shotsTotal: 0, shotsOnTarget: 0, xG: 0, xA: 0, keyPasses: 3, dribbles: 2, dribblesSuccess: 2, tackles: 0, interceptions: 1, clearances: 8, blocks: 2, duelsWon: 5, duelsTotal: 8, aerialWon: 3, aerialTotal: 5, passes: 280, passesCompleted: 245, passAccuracy: 87.5, longBalls: 85, longBallsCompleted: 52, crosses: 0, crossesCompleted: 0, yellowCards: 1, redCards: 0, foulsCommitted: 0, foulsSuffered: 2, saves: 48, cleanSheets: 6, goalsConceded: 8, penaltiesSaved: 2, savePercentage: 85.7 },
   '3': { playerId: '3', matchesPlayed: 11, minutesPlayed: 990, starts: 11, goals: 2, assists: 4, shotsTotal: 15, shotsOnTarget: 8, xG: 1.8, xA: 3.5, keyPasses: 18, dribbles: 42, dribblesSuccess: 28, tackles: 18, interceptions: 12, clearances: 22, blocks: 5, duelsWon: 68, duelsTotal: 95, aerialWon: 12, aerialTotal: 22, passes: 520, passesCompleted: 458, passAccuracy: 88.1, longBalls: 32, longBallsCompleted: 22, crosses: 45, crossesCompleted: 18, yellowCards: 2, redCards: 0, foulsCommitted: 8, foulsSuffered: 15 },
@@ -290,4 +424,35 @@ export const dataProvider = {
     };
     return labels[position];
   },
+
+  getMatches: (team?: TeamType, competition?: CompetitionType): Match[] => {
+    let filtered = matchesData;
+    
+    if (competition && competition !== 'all') {
+      filtered = filtered.filter(m => m.competition === competition);
+    }
+    
+    return filtered;
+  },
+
+  getMatch: (matchId: string): Match | undefined => {
+    return matchesData.find(m => m.id === matchId);
+  },
+
+  getMatchStats: (matchId: string): MatchStats[] => {
+    const stats: MatchStats[] = [];
+    Object.values(matchStatsData).forEach(playerStats => {
+      const matchStat = playerStats.find(s => s.matchId === matchId);
+      if (matchStat) stats.push(matchStat);
+    });
+    return stats;
+  },
+
+  getPlayerMatchStats: (playerId: string): MatchStats[] => {
+    return matchStatsData[playerId] || [];
+  },
+
+  getPlayerEvolution: (playerId: string): PlayerEvolution[] => {
+    return playerEvolutionData[playerId] || [];
+  }
 };

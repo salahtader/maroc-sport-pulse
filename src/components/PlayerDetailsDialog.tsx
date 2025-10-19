@@ -10,6 +10,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { PlayerIndividualRadar } from "@/components/PlayerIndividualRadar";
+import { PlayerEvolutionChart } from "@/components/PlayerEvolutionChart";
+import { PlayerMatchHistory } from "@/components/PlayerMatchHistory";
 import { 
   User, MapPin, Trophy, TrendingUp, Target, Shield, 
   Activity, Zap, AlertCircle, Clock, Calendar
@@ -85,9 +87,11 @@ export const PlayerDetailsDialog = ({ player, onClose }: PlayerDetailsDialogProp
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
             <TabsTrigger value="radar">Radar</TabsTrigger>
+            <TabsTrigger value="evolution">Évolution</TabsTrigger>
+            <TabsTrigger value="matches">Matchs</TabsTrigger>
             <TabsTrigger value="offensive">Offensif</TabsTrigger>
             <TabsTrigger value="defensive">Défensif</TabsTrigger>
             <TabsTrigger value="passing">Passes</TabsTrigger>
@@ -157,6 +161,14 @@ export const PlayerDetailsDialog = ({ player, onClose }: PlayerDetailsDialogProp
 
           <TabsContent value="radar" className="space-y-4">
             <PlayerIndividualRadar playerId={player.id} />
+          </TabsContent>
+
+          <TabsContent value="evolution" className="space-y-4">
+            <PlayerEvolutionChart playerId={player.id} />
+          </TabsContent>
+
+          <TabsContent value="matches" className="space-y-4">
+            <PlayerMatchHistory playerId={player.id} />
           </TabsContent>
 
           <TabsContent value="offensive" className="space-y-4">

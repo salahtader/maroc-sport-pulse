@@ -50,7 +50,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs />
+        <Breadcrumbs items={[{ label: 'Dashboard', href: '/dashboard' }]} />
         
         <div className="mb-8 flex items-start justify-between animate-fade-in">
           <div>
