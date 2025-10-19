@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { PlayerIndividualRadar } from "@/components/PlayerIndividualRadar";
 import { PlayerEvolutionChart } from "@/components/PlayerEvolutionChart";
 import { PlayerMatchHistory } from "@/components/PlayerMatchHistory";
+import { AIAnalysisButton } from "@/components/AIAnalysisButton";
 import { 
   User, MapPin, Trophy, TrendingUp, Target, Shield, 
   Activity, Zap, AlertCircle, Clock, Calendar
@@ -72,15 +73,29 @@ export const PlayerDetailsDialog = ({ player, onClose }: PlayerDetailsDialogProp
                   {player.age} ans
                 </Badge>
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  <span>{player.club}</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    <span>{player.club}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Trophy className="h-3 w-3" />
+                    <span>{dataProvider.getTeamLabel(player.team)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Trophy className="h-3 w-3" />
-                  <span>{dataProvider.getTeamLabel(player.team)}</span>
-                </div>
+                <AIAnalysisButton
+                  type="player"
+                  data={{
+                    name: player.name,
+                    position: dataProvider.getPositionLabel(player.position),
+                    team: dataProvider.getTeamLabel(player.team),
+                    stats: stats,
+                    evolution: dataProvider.getPlayerEvolution(player.id),
+                    recentMatches: dataProvider.getPlayerMatchStats(player.id).slice(0, 5)
+                  }}
+                  label="Analyser"
+                />
               </div>
             </div>
           </div>

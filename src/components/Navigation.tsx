@@ -8,6 +8,7 @@ export const Navigation = () => {
   const navItems = [
     { path: "/", label: "Accueil" },
     { path: "/dashboard", label: "Dashboard" },
+    { path: "/teams", label: "Équipes" },
     { path: "/players", label: "Joueurs" },
     { path: "/matches", label: "Matchs" },
   ];
