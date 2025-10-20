@@ -9,6 +9,7 @@ import { Calendar, MapPin, Trophy, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { AIAnalysisButton } from "@/components/AIAnalysisButton";
 
 export default function Matches() {
   const [selectedCompetition, setSelectedCompetition] = useState<string>('all');
@@ -144,9 +145,10 @@ export default function Matches() {
               </DialogHeader>
 
               <Tabs defaultValue="stats" className="mt-4">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="stats">Statistiques</TabsTrigger>
                   <TabsTrigger value="players">Joueurs</TabsTrigger>
+                  <TabsTrigger value="ai">Analyse IA</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="stats" className="space-y-4">
@@ -251,6 +253,23 @@ export default function Matches() {
                           </Card>
                         );
                       })}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="ai" className="space-y-4">
+                  <div className="text-center py-4">
+                    <AIAnalysisButton
+                      type="post_match_report"
+                      data={{
+                        match: selectedMatchData,
+                        stats: matchStats,
+                        players: matchStats.map(s => ({
+                          name: dataProvider.getPlayer(s.playerId)?.name,
+                          ...s
+                        }))
+                      }}
+                      label="Générer rapport post-match"
+                    />
                   </div>
                 </TabsContent>
               </Tabs>

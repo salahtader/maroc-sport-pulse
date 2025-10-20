@@ -6,7 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIAnalysisButtonProps {
-  type: 'player' | 'team' | 'match' | 'comparison';
+  type: 'player' | 'team' | 'match' | 'comparison' | 'team_performance' | 'team_style' | 
+        'opponent_threats' | 'opponent_weaknesses' | 'lineup_recommendation' | 'tactical_adjustment' |
+        'player_prediction' | 'injury_risk' | 'performance_regression' | 'team_strengths_weaknesses' |
+        'scouting_profile' | 'match_predictor' | 'xg_analysis' | 'game_plan' | 'post_match_report';
   data: any;
   label?: string;
 }

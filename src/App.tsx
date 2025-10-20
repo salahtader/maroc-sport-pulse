@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Players from "./pages/Players";
 import Matches from "./pages/Matches";
 import Teams from "./pages/Teams";
+import AIAnalytics from "./pages/AIAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/players" element={<Players />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/ai-analytics" element={<AIAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export const Navigation = () => {
@@ -11,6 +11,7 @@ export const Navigation = () => {
     { path: "/teams", label: "Équipes" },
     { path: "/players", label: "Joueurs" },
     { path: "/matches", label: "Matchs" },
+    { path: "/ai-analytics", label: "Analyses IA", icon: Sparkles },
   ];
 
   return (
@@ -33,6 +34,7 @@ export const Navigation = () => {
                   variant={location.pathname === item.path ? "default" : "ghost"}
                   className="hover:bg-primary/10 transition-all duration-300 relative group"
                 >
+                  {item.icon && <item.icon className="h-4 w-4 mr-2" />}
                   {item.label}
                   {location.pathname === item.path && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary animate-slide-in" />
