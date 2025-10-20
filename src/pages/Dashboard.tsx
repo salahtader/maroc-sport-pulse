@@ -68,22 +68,20 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center justify-between gap-4 mb-8">
-          <div className="flex-1">
-            <FilterPanel
-              selectedTeam={selectedTeam}
-              selectedCompetition={selectedCompetition}
-              selectedPeriod={selectedPeriod}
-              onTeamChange={setSelectedTeam}
-              onCompetitionChange={setSelectedCompetition}
-              onPeriodChange={setSelectedPeriod}
-            />
-          </div>
-        </div>
+      {/* Filters */}
+      <div className="flex-1">
+        <FilterPanel
+          selectedTeam={selectedTeam}
+          selectedCompetition={selectedCompetition}
+          selectedPeriod={selectedPeriod}
+          onTeamChange={setSelectedTeam}
+          onCompetitionChange={setSelectedCompetition}
+          onPeriodChange={setSelectedPeriod}
+        />
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
             <Card
               key={index}
@@ -100,7 +98,7 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">{stat.title}</p>
             </Card>
           ))}
-        </div>
+      </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

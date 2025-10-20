@@ -103,10 +103,8 @@ export default function Teams() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <Breadcrumbs items={[{ label: 'Équipes', href: '/teams' }]} />
-      
-      <div className="mb-8 animate-fade-in">
+    <div className="flex-1 space-y-8 p-8 animate-fade-in">
+      <div>
         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Analyse des Équipes
         </h1>

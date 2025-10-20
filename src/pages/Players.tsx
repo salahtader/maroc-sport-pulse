@@ -139,21 +139,18 @@ const Players = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs items={[{ label: 'Joueurs', href: '/players' }]} />
-        
-        {/* Header */}
-        <div className="mb-8 animate-fade-in">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
-                Analyse des Joueurs
-              </h1>
-              <p className="text-muted-foreground">
-                Statistiques détaillées et performances individuelles • {dataProvider.getTeamLabel(selectedTeam)}
-              </p>
-            </div>
+    <div className="flex-1 space-y-8 p-8 animate-fade-in">
+      {/* Header */}
+      <div>
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Gestion des Joueurs
+            </h1>
+            <p className="text-muted-foreground">
+              Suivi détaillé des performances et statistiques de chaque joueur • {dataProvider.getTeamLabel(selectedTeam)}
+            </p>
+          </div>
             <Button
               variant={compareMode ? "default" : "outline"}
               onClick={toggleCompareMode}

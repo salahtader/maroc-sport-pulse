@@ -236,10 +236,8 @@ export default function AIAnalytics() {
     : scenarios.filter(s => s.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <Breadcrumbs items={[{ label: 'Analyses IA', href: '/ai-analytics' }]} />
-      
-      <div className="mb-8 animate-fade-in">
+    <div className="flex-1 space-y-8 p-8 animate-fade-in">
+      <div>
         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Analyses IA Avancées
         </h1>
