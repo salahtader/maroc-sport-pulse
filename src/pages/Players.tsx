@@ -141,44 +141,42 @@ const Players = () => {
   return (
     <div className="flex-1 space-y-8 p-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Gestion des Joueurs
-            </h1>
-            <p className="text-muted-foreground">
-              Suivi détaillé des performances et statistiques de chaque joueur • {dataProvider.getTeamLabel(selectedTeam)}
-            </p>
-          </div>
-            <Button
-              variant={compareMode ? "default" : "outline"}
-              onClick={toggleCompareMode}
-              className="gap-2"
-            >
-              <Activity className="h-4 w-4" />
-              {compareMode ? `Comparer (${selectedForComparison.length}/3)` : 'Mode Comparaison'}
-            </Button>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            {stats.map((stat, index) => (
-              <Card key={index} className="p-4 bg-card/50 backdrop-blur-sm border-border">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                  </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                </div>
-              </Card>
-            ))}
-          </div>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Gestion des Joueurs
+          </h1>
+          <p className="text-muted-foreground">
+            Suivi détaillé des performances et statistiques de chaque joueur • {dataProvider.getTeamLabel(selectedTeam)}
+          </p>
         </div>
+        <Button
+          variant={compareMode ? "default" : "outline"}
+          onClick={toggleCompareMode}
+          className="gap-2"
+        >
+          <Activity className="h-4 w-4" />
+          {compareMode ? `Comparer (${selectedForComparison.length}/3)` : 'Mode Comparaison'}
+        </Button>
+      </div>
 
-        {/* Filters */}
-        <Card className="p-6 mb-6 bg-card/50 backdrop-blur-sm border-border animate-slide-in">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {stats.map((stat, index) => (
+          <Card key={index} className="p-4 bg-card/50 backdrop-blur-sm border-border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+                <p className="text-2xl font-bold">{stat.value}</p>
+              </div>
+              <stat.icon className={`h-8 w-8 ${stat.color}`} />
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <Card className="p-6 mb-6 bg-card/50 backdrop-blur-sm border-border animate-slide-in">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
@@ -243,10 +241,10 @@ const Players = () => {
               />
             </div>
           </div>
-        </Card>
+      </Card>
 
-        {/* Comparison View */}
-        {compareMode && selectedForComparison.length >= 2 && (
+      {/* Comparison View */}
+      {compareMode && selectedForComparison.length >= 2 && (
           <>
             <PlayerRadarAnalysis playerIds={selectedForComparison} />
             <PlayersComparison
@@ -257,10 +255,10 @@ const Players = () => {
               }}
             />
           </>
-        )}
+      )}
 
-        {/* Players Grid */}
-        <div className="mb-8">
+      {/* Players Grid */}
+      <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">
               {filteredAndSortedPlayers.length} {filteredAndSortedPlayers.length === 1 ? 'Joueur' : 'Joueurs'}
@@ -295,16 +293,15 @@ const Players = () => {
               <p className="text-muted-foreground">Aucun joueur trouvé</p>
             </Card>
           )}
-        </div>
-
-        {/* Player Details Dialog */}
-        {selectedPlayer && !compareMode && (
-          <PlayerDetailsDialog
-            player={selectedPlayer}
-            onClose={() => setSelectedPlayer(null)}
-          />
-        )}
       </div>
+
+      {/* Player Details Dialog */}
+      {selectedPlayer && !compareMode && (
+        <PlayerDetailsDialog
+          player={selectedPlayer}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </div>
   );
 };
