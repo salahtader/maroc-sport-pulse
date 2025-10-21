@@ -146,18 +146,31 @@ export const AIAnalysisButton = ({ type, data, label = "Analyse IA" }: AIAnalysi
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Sparkles className="h-6 w-6 text-primary" />
+          <DialogHeader className="border-b pb-4">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
+                <Sparkles className="h-8 w-8 text-primary" />
               </div>
-              <div>
-                <div className="text-xl">Analyse IA Avancée</div>
-                <div className="text-sm text-muted-foreground font-normal mt-1">
-                  Insights tactiques et recommandations personnalisées
+              <div className="flex-1">
+                <DialogTitle className="text-2xl font-bold mb-2">
+                  Analyse IA Avancée
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Insights tactiques et recommandations personnalisées basées sur l'intelligence artificielle
+                </p>
+                <div className="flex gap-2 mt-3">
+                  <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    ⚽ Analyse Tactique
+                  </div>
+                  <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    📊 Statistiques Avancées
+                  </div>
+                  <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    🎯 Recommandations
+                  </div>
                 </div>
               </div>
-            </DialogTitle>
+            </div>
           </DialogHeader>
 
           <ScrollArea className="flex-1 mt-4">
@@ -249,38 +262,67 @@ export const AIAnalysisButton = ({ type, data, label = "Analyse IA" }: AIAnalysi
                   </div>
                 </TabsContent>
 
-                <TabsContent value="analysis" className="space-y-4">
-                  {parseAnalysisContent(analysis).map((section, idx) => {
-                    const Icon = getAnalysisIcon();
-                    const lines = section.split('\n');
-                    const title = lines[0].replace(/^#+\s*/, '').replace(/^\d+\.\s*/, '').replace(/\*\*/g, '');
-                    const content = lines.slice(1).join('\n').trim();
-                    
-                    let variant: "default" | "success" | "warning" | "danger" = "default";
-                    let badge = undefined;
-                    
-                    if (title.toLowerCase().includes('force') || title.toLowerCase().includes('point fort')) {
-                      variant = "success";
-                      badge = "✓ Force";
-                    } else if (title.toLowerCase().includes('faible') || title.toLowerCase().includes('amélioration')) {
-                      variant = "warning";
-                      badge = "⚠ À améliorer";
-                    } else if (title.toLowerCase().includes('risque') || title.toLowerCase().includes('menace')) {
-                      variant = "danger";
-                      badge = "⚡ Critique";
-                    }
+                <TabsContent value="analysis" className="space-y-3">
+                  <div className="bg-muted/30 rounded-lg p-6 border border-border/50">
+                    <div className="space-y-4">
+                      {parseAnalysisContent(analysis).map((section, idx) => {
+                        const lines = section.split('\n');
+                        const title = lines[0].replace(/^#+\s*/, '').replace(/^\d+\.\s*/, '').replace(/\*\*/g, '');
+                        const contentLines = lines.slice(1).filter(line => line.trim());
+                        
+                        let iconEmoji = "📋";
+                        let badgeColor = "bg-primary/10 text-primary";
+                        
+                        if (title.toLowerCase().includes('force') || title.toLowerCase().includes('point fort')) {
+                          iconEmoji = "✓";
+                          badgeColor = "bg-green-500/10 text-green-600 dark:text-green-400";
+                        } else if (title.toLowerCase().includes('faible') || title.toLowerCase().includes('amélioration')) {
+                          iconEmoji = "⚠";
+                          badgeColor = "bg-orange-500/10 text-orange-600 dark:text-orange-400";
+                        } else if (title.toLowerCase().includes('risque') || title.toLowerCase().includes('menace')) {
+                          iconEmoji = "⚡";
+                          badgeColor = "bg-red-500/10 text-red-600 dark:text-red-400";
+                        } else if (title.toLowerCase().includes('recommandation')) {
+                          iconEmoji = "🎯";
+                        } else if (title.toLowerCase().includes('tactique')) {
+                          iconEmoji = "⚽";
+                        }
 
-                    return (
-                      <AnalysisSection
-                        key={idx}
-                        title={title}
-                        icon={Icon}
-                        content={content}
-                        variant={variant}
-                        badge={badge}
-                      />
-                    );
-                  })}
+                        return (
+                          <div key={idx} className="group">
+                            <div className="flex items-start gap-3 mb-2">
+                              <div className={`px-2 py-1 rounded-md ${badgeColor} font-medium text-sm flex items-center gap-1.5`}>
+                                <span>{iconEmoji}</span>
+                                <span className="font-semibold">{idx + 1}</span>
+                              </div>
+                              <h3 className="font-semibold text-base flex-1 pt-0.5">
+                                {title}
+                              </h3>
+                            </div>
+                            <div className="ml-11 space-y-2">
+                              {contentLines.map((line, lineIdx) => {
+                                const trimmedLine = line.trim();
+                                if (!trimmedLine) return null;
+                                
+                                const isBullet = trimmedLine.startsWith('*') || trimmedLine.startsWith('-');
+                                const cleanLine = isBullet ? trimmedLine.replace(/^[\*\-]\s*/, '') : trimmedLine;
+                                
+                                return (
+                                  <div key={lineIdx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                    {isBullet && <span className="text-primary mt-0.5">•</span>}
+                                    <span className="flex-1 leading-relaxed">{cleanLine}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            {idx < parseAnalysisContent(analysis).length - 1 && (
+                              <div className="mt-4 border-b border-border/30" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             ) : null}
